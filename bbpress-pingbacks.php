@@ -25,11 +25,9 @@ class bbPress_Pingbacks {
 
 	function __construct() {
 		add_action( 'bbp_template_after_replies_loop', array( $this, 'add_topic_pingbacks_template' ) );
-
-		add_filter( 'bbp_get_template_stack', array( $this, 'add_templates_folder' ) );
+		add_filter( 'bbp_get_template_stack',		   array( $this, 'add_templates_folder' 		) );
 
 		$this->templates_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates';
-
 	}
 
 	/**
@@ -52,8 +50,11 @@ class bbPress_Pingbacks {
 	}
 
 
-	/********* HELPER FUNCTIONS **************/
-
+	/**
+	 * Loads the pingbacks for a given post
+	 *
+	 * @param int $post_id
+	 */
 	public function load_pingbacks( $post_id = null ) {
 
 		if ( empty( $post_id ) )
@@ -72,21 +73,38 @@ class bbPress_Pingbacks {
 		$this->pingbacks = $query->query( $args );
 	}
 
+	/**
+	 * Loads the pingbacks on the first call, and then returns true until
+	 * all the pingbacks were traversed with the_pingback
+	 *
+	 * @return bool
+	 */
 	public function have_pingbacks() {
 
 		if ( $this->pingbacks === null )
 			$this->load_pingbacks();
 
-		if ( empty( $this->pingbacks ) )
+		if ( empty( $this->pingbacks ) ){
+			$this->pingbacks = null;
 			return false;
+		}
+
 		return true;
 	}
 
+	/**
+	 * Advances the pingbacks array and returns the current pingback
+	 * @return null
+	 */
 	public function the_pingback() {
 		$this->current_pingback = array_shift( $this->pingbacks );
 		return $this->current_pingback();
 	}
 
+	/**
+	 * Returns the current pingback
+	 * @return null
+	 */
 	public function current_pingback() {
 		return $this->current_pingback;
 	}

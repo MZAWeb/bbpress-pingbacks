@@ -19,7 +19,7 @@ function bbp_have_pingbacks() {
 }
 
 /**
- * Returns the current pingback and advances the array
+ * Set the 'comment' global with the next pingback in the array
  *
  * @return array
  */
