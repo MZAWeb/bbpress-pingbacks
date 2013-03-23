@@ -25,7 +25,7 @@ class bbPress_Pingbacks {
 
 	function __construct() {
 		add_action( 'bbp_template_after_replies_loop', 	array( $this, 'add_topic_pingbacks_template'	) );
-		add_filter( 'bbp_get_template_stack', 		array( $this, 'add_templates_folder' 			) );
+		add_filter( 'bbp_get_template_stack', 		array( $this, 'add_templates_folder' 		) );
 
 		$this->templates_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates';
 	}
