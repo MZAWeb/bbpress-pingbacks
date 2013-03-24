@@ -24,6 +24,7 @@ class bbPress_Pingbacks {
 	protected $current_pingback = null;
 
 	function __construct() {
+		add_action( 'bbp_theme_after_reply_content', 	array( $this, 'add_reply_pingbacks_template'	) );
 		add_action( 'bbp_template_after_replies_loop', 	array( $this, 'add_topic_pingbacks_template'	) );
 		add_filter( 'bbp_get_template_stack', 		array( $this, 'add_templates_folder' 		) );
 
@@ -35,6 +36,13 @@ class bbPress_Pingbacks {
 	 */
 	public function add_topic_pingbacks_template() {
 		bbp_get_template_part( 'loop', 'topic-pingbacks' );
+	}
+
+	/**
+	 * Adds the pingbacks template after each single reply
+	 */
+	public function add_reply_pingbacks_template() {
+		bbp_get_template_part( 'loop', 'reply-pingbacks' );
 	}
 
 	/**
@@ -57,8 +65,15 @@ class bbPress_Pingbacks {
 	 */
 	public function load_pingbacks( $post_id = null ) {
 
-		if ( empty( $post_id ) )
-			$post_id = get_the_ID();
+		/* We don't want the topic pingbacks on the first post */
+		if ( bbp_get_reply_id() == bbp_get_topic_id() )
+			return;
+
+		if ( empty( $post_id ) ) {
+			$post_id = bbp_get_reply_id();
+			if ( empty( $post_id ) )
+				$post_id = bbp_get_topic_id();
+		}
 
 		$this->current_pingback = null;
 

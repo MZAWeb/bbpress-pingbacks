@@ -2,18 +2,14 @@
 
 <?php do_action( 'bbp_template_before_topic_pingbacks_loop' ); ?>
 
-<h2><?php _e( 'Topic pingbacks:', 'bbpress-pingbacks' ); ?></h2>
+<h2><?php _e( 'Reply pingbacks:', 'bbpress-pingbacks' ); ?></h2>
 
-<ul id="topic-<?php bbp_topic_id(); ?>-pingbacks" class="bbp-topic-pingbacks">
-	<li class="bbp-body">
-
+<ul id="reply-<?php bbp_reply_id(); ?>-pingbacks" class="bbp-reply-pingbacks">
 		<?php while ( bbp_have_pingbacks() ) : bbp_the_pingback(); ?>
 
-		<?php 	bbp_get_template_part( 'loop', 'single-topic-pingback' ); ?>
+		<?php 	bbp_get_template_part( 'loop', 'single-reply-pingback' ); ?>
 
 		<?php endwhile; ?>
-
-	</li>
 </ul>
 
 <?php do_action( 'bbp_template_after_topic_pingbacks_loop' ); ?>

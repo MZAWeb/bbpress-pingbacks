@@ -26,3 +26,16 @@ function bbp_have_pingbacks() {
 function bbp_the_pingback() {
 	$GLOBALS['comment'] = bbp_pingbacks()->the_pingback();
 }
+
+/**
+ * echo the current pingback ID
+ *
+ * @return array
+ */
+function bbp_pingback_id() {
+	$current = bbp_pingbacks()->current_pingback();
+	if ( empty( $current ) )
+		return;
+
+	echo $current->comment_ID;
+}
