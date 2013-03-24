@@ -1,5 +1,5 @@
 <?php do_action( 'bbp_template_before_topic_pingbacks_loop' ); ?>
-
+<h2><?php _e( 'Topic pingbacks:', 'bbpress-pingbacks' ); ?></h2>
 <ul id="topic-<?php bbp_topic_id(); ?>-pingbacks" class="forums bbp-replies">
 	<li class="bbp-body">
 
