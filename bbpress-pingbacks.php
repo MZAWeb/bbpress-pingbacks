@@ -11,11 +11,20 @@
  */
 
 include_once "template-tags.php";
+include_once "bbpress-pingbacks-admin.php";
 
 class bbPress_Pingbacks {
 
-	/* Singleton instance of this class */
+	/**
+	 * Singleton instance of this class
+	 * @var bbPress_Pingbacks
+	 */
 	protected static $instance;
+
+	/**
+	 * @var bbPress_Pingbacks_Admin
+	 */
+	public $admin;
 
 	/* Path of the templates included in this plugin */
 	protected $templates_path;
@@ -26,9 +35,12 @@ class bbPress_Pingbacks {
 	function __construct() {
 		add_action( 'bbp_theme_after_reply_content', 	array( $this, 'add_reply_pingbacks_template'	) );
 		add_action( 'bbp_template_after_replies_loop', 	array( $this, 'add_topic_pingbacks_template'	) );
-		add_filter( 'bbp_get_template_stack', 		array( $this, 'add_templates_folder' 		) );
+
+		add_filter( 'bbp_get_template_stack', array( $this, 'add_templates_folder' ) );
 
 		$this->templates_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates';
+
+		$this->admin = new bbPress_Pingbacks_Admin();
 	}
 
 	/**
@@ -123,6 +135,7 @@ class bbPress_Pingbacks {
 	public function current_pingback() {
 		return $this->current_pingback;
 	}
+
 
 	/**
 	 * Singleton function to get the only instance of this class

@@ -39,3 +39,10 @@ function bbp_pingback_id() {
 
 	echo $current->comment_ID;
 }
+
+function bbp_allow_topic_pingbacks( $default = false ) {
+	return bbp_pingbacks()->admin->allow_topic_pingbacks( $default );
+}
+function bbp_allow_reply_pingbacks( $default = false ) {
+	return bbp_pingbacks()->admin->allow_reply_pingbacks( $default );
+}
