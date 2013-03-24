@@ -34,7 +34,7 @@ class bbPress_Pingbacks {
 	 * Adds the pingbacks template after the replies loop
 	 */
 	public function add_topic_pingbacks_template() {
-		bbp_get_template_part( 'pingbacks', 'topic' );
+		bbp_get_template_part( 'loop', 'topic-pingbacks' );
 	}
 
 	/**

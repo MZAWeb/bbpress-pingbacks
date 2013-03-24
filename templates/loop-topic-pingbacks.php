@@ -5,7 +5,7 @@
 
 		<?php while ( bbp_have_pingbacks() ) : bbp_the_pingback(); ?>
 
-		<?php bbp_get_template_part( 'loop', 'single-pingback' ); ?>
+		<?php bbp_get_template_part( 'loop', 'single-topic-pingback' ); ?>
 
 		<?php endwhile; ?>
 	</li>
