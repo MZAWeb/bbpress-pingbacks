@@ -22,21 +22,35 @@ class bbPress_Pingbacks {
 	protected static $instance;
 
 	/**
+	 * Object with the admin functionality
 	 * @var bbPress_Pingbacks_Admin
 	 */
 	public $admin;
 
-	/* Path of the templates included in this plugin */
+	/**
+	 * Path of the templates included in this plugin
+	 * @var string
+	 */
 	protected $templates_path;
 
+	/**
+	 * Current array of pinbacks for the queried object
+	 * @var null | array
+	 */
 	protected $pingbacks = null;
+
+	/**
+	 * Current single pingback while in a loop of pingbacks
+	 * @var null | array
+	 */
 	protected $current_pingback = null;
 
 	function __construct() {
-		add_action( 'bbp_theme_after_reply_content', 	array( $this, 'add_reply_pingbacks_template'	) );
-		add_action( 'bbp_template_after_replies_loop', 	array( $this, 'add_topic_pingbacks_template'	) );
+		add_action( 'bbp_theme_after_reply_content', 	array( $this, 'add_reply_pingbacks_template'			) );
+		add_action( 'bbp_template_after_replies_loop', 	array( $this, 'add_topic_pingbacks_template'			) );
 
-		add_filter( 'bbp_get_template_stack', array( $this, 'add_templates_folder' ) );
+		add_filter( 'bbp_get_template_stack', 	array( $this, 'add_templates_folder' 	) 		 );
+		add_filter( 'pings_open',				array( $this, 'allow_pings' 			), 10, 2 );
 
 		$this->templates_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates';
 
@@ -44,17 +58,35 @@ class bbPress_Pingbacks {
 	}
 
 	/**
+	 * Make WP accept pingbacks for bbPress types
+	 * @param $open
+	 * @param $post_id
+	 *
+	 * @return bool
+	 */
+	public function allow_pings( $open, $post_id ) {
+		$type = get_post_type( $post_id );
+
+		if ( $type === bbp_get_topic_post_type() || $type === bbp_get_reply_post_type() )
+			return true;
+
+		return $open;
+	}
+
+	/**
 	 * Adds the pingbacks template after the replies loop
 	 */
 	public function add_topic_pingbacks_template() {
-		bbp_get_template_part( 'loop', 'topic-pingbacks' );
+		if ( bbp_allow_topic_pingbacks() )
+			bbp_get_template_part( 'loop', 'topic-pingbacks' );
 	}
 
 	/**
 	 * Adds the pingbacks template after each single reply
 	 */
 	public function add_reply_pingbacks_template() {
-		bbp_get_template_part( 'loop', 'reply-pingbacks' );
+		if ( bbp_allow_reply_pingbacks() )
+			bbp_get_template_part( 'loop', 'reply-pingbacks' );
 	}
 
 	/**
@@ -98,7 +130,36 @@ class bbPress_Pingbacks {
 		$query = new WP_Comment_Query;
 
 		$this->pingbacks = $query->query( $args );
+
+		if ( bbp_allow_only_internal_pingbacks() )
+			$this->pingbacks = array_filter( $this->pingbacks, array( $this, '_filter_internal_pingbacks' ) );
+
 	}
+
+
+	/**
+	 * Checks if a pingback url is internal (ie: from this site's domain)
+	 *
+	 * Used as callback for the array_filter used in load_pingbacks()
+	 *
+	 * @param $pingback
+	 *
+	 * @return bool
+	 */
+	protected function _filter_internal_pingbacks( $pingback ) {
+
+		if ( empty( $pingback->comment_author_url ) )
+			return false;
+
+		$local        = parse_url( home_url() );
+		$pingback_url = parse_url( $pingback->comment_author_url );
+
+		if ( $local['host'] !== $pingback_url['host'] )
+			return false;
+
+		return true;
+	}
+
 
 	/**
 	 * Loads the pingbacks on the first call, and then returns true until

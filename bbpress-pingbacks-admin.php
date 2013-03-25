@@ -11,6 +11,12 @@ class bbPress_Pingbacks_Admin {
 	 * @var string
 	 */
 	protected $allow_reply_pingbacks = '_bbp_allow_reply_pingbacks';
+	/**
+	 * Allow only internal pingbacks options key
+	 * @var string
+	 */
+	protected $allow_only_internal_pingbacks = '_bbp_allow_only_internal_pingbacks';
+
 
 	function __construct() {
 		add_filter( 'bbp_admin_get_settings_sections', 	array( $this, 'add_settings_section' 	 ) 		  );
@@ -19,6 +25,7 @@ class bbPress_Pingbacks_Admin {
 	}
 
 	/**
+	 * Returns whether the topic pingbacks are active or not.
 	 * @param bool $default
 	 *
 	 * @return bool
@@ -28,12 +35,23 @@ class bbPress_Pingbacks_Admin {
 	}
 
 	/**
+	 * Returns whether the reply pingbacks are active or not.
 	 * @param bool $default
 	 *
 	 * @return bool
 	 */
 	public function allow_reply_pingbacks( $default ) {
 		return (bool) apply_filters( 'bbp_allow_reply_pingbacks', (bool) get_option( $this->allow_reply_pingbacks, $default ) );
+	}
+
+	/**
+	 * Returns whether only the internal (same domain) pingbacks are active.
+	 * @param bool $default
+	 *
+	 * @return bool
+	 */
+	public function allow_only_internal_pingbacks( $default ) {
+		return (bool) apply_filters( 'bbp_allow_only_internal_pingbacks', (bool) get_option( $this->allow_only_internal_pingbacks, $default ) );
 	}
 
 	/**
@@ -49,7 +67,6 @@ class bbPress_Pingbacks_Admin {
 			'callback' => array( $this, 'setting_section_description' ),
 			'page'     => 'bbpress'
 		);
-
 		return $sections;
 	}
 
@@ -87,16 +104,23 @@ class bbPress_Pingbacks_Admin {
 		$settings['bbp_settings_pingbacks'] = array(
 
 			// Allow topic pingbacks
-			'_bbp_allow_topic_pingbacks' => array(
+			$this->allow_topic_pingbacks           => array(
 				'title'             => __( 'Topic Pingbacks', 'bbpress-pingbacks' ),
 				'callback'          => array( $this, 'field_allow_topic_pingbacks' ),
 				'sanitize_callback' => 'intval',
 				'args'              => array()
 			),
 			// Allow reply pingbacks
-			'_bbp_allow_reply_pingbacks' => array(
+			$this->allow_reply_pingbacks           => array(
 				'title'             => __( 'Reply Pingbacks', 'bbpress-pingbacks' ),
 				'callback'          => array( $this, 'field_allow_reply_pingbacks' ),
+				'sanitize_callback' => 'intval',
+				'args'              => array()
+			),
+			// Allow reply pingbacks
+			$this->allow_only_internal_pingbacks   => array(
+				'title'             => __( 'Filter Pingbacks', 'bbpress-pingbacks' ),
+				'callback'          => array( $this, 'field_allow_only_internal_pingbacks' ),
 				'sanitize_callback' => 'intval',
 				'args'              => array()
 			),
@@ -122,6 +146,16 @@ class bbPress_Pingbacks_Admin {
 		?>
 	<input id="<?php echo $this->allow_reply_pingbacks; ?>" name="<?php echo $this->allow_reply_pingbacks; ?>" type="checkbox" value="1" <?php checked( bbp_allow_reply_pingbacks( false ) ); ?> />
 	<label for="<?php echo $this->allow_reply_pingbacks; ?>"><?php _e( 'Show reply pingbacks', 'bbpress-pingbacks' ); ?></label>
+	<?php
+	}
+
+	/**
+	 * Settings field for allow only internal pingbacks
+	 */
+	public function field_allow_only_internal_pingbacks() {
+	?>
+	<input id="<?php echo $this->allow_only_internal_pingbacks; ?>" name="<?php echo $this->allow_only_internal_pingbacks; ?>" type="checkbox" value="1" <?php checked( bbp_allow_only_internal_pingbacks( false ) ); ?> />
+	<label for="<?php echo $this->allow_only_internal_pingbacks; ?>"><?php _e( 'Show only intenal (same domain) pingbacks', 'bbpress-pingbacks' ); ?></label>
 	<?php
 	}
 

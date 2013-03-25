@@ -40,9 +40,32 @@ function bbp_pingback_id() {
 	echo $current->comment_ID;
 }
 
+/**
+ * Returns whether the topic pingbacks are active or not.
+ * @param bool $default
+ *
+ * @return bool
+ */
 function bbp_allow_topic_pingbacks( $default = false ) {
 	return bbp_pingbacks()->admin->allow_topic_pingbacks( $default );
 }
+
+/**
+ * Returns whether the reply pingbacks are active or not.
+ * @param bool $default
+ *
+ * @return bool
+ */
 function bbp_allow_reply_pingbacks( $default = false ) {
 	return bbp_pingbacks()->admin->allow_reply_pingbacks( $default );
+}
+
+/**
+ * Returns whether only the internal (same domain) pingbacks are active.
+ * @param bool $default
+ *
+ * @return mixed
+ */
+function bbp_allow_only_internal_pingbacks( $default = false ) {
+	return bbp_pingbacks()->admin->allow_only_internal_pingbacks( $default );
 }
