@@ -52,6 +52,9 @@ class bbPress_Pingbacks {
 		add_filter( 'bbp_get_template_stack', 	array( $this, 'add_templates_folder' 	) 		 );
 		add_filter( 'pings_open',				array( $this, 'allow_pings' 			), 10, 2 );
 
+		add_action( 'publish_reply', '_publish_post_hook', 5, 1 );
+		add_action( 'publish_topic', '_publish_post_hook', 5, 1 );
+
 		$this->templates_path = trailingslashit( plugin_dir_path( __FILE__ ) ) . 'templates';
 
 		$this->admin = new bbPress_Pingbacks_Admin();
